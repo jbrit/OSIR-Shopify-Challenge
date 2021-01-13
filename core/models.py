@@ -37,5 +37,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class ImageItem(models.Model):
     name = models.CharField(_('name'), max_length=30, blank=False)
-    description = models.CharField(_('description'), max_length=30, blank=True)
-    image = models.ImageField(upload_to='media/images/', null=True, blank=True)
+    description = models.CharField(_('description'), max_length=300, blank=True)
+    image = models.ImageField(upload_to='images', null=False, blank=False)
+    public = models.BooleanField(default=True)
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    def __str__(self):
+        return self.name
