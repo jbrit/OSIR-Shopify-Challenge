@@ -1,7 +1,8 @@
 {% extends "core/base.html" %}
 {% block "content" %}
 <h2 class="text-center mb-3">Sign Up</h2>
-<form style="max-width: 420px;" class="mx-auto">
+<form method="POST" action="." style="max-width: 420px;" class="mx-auto">
+  {% csrf_token %}
   <div class="mb-3">
     <label for="exampleInputEmail1" class="form-label">Email address</label>
     <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">

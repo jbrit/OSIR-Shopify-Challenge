@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404, Http404
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import ListView
-from core.models import ImageItem
+from core.models import ImageItem, User
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .forms import ImageForm
+from .forms import ImageForm, UserRegistrationForm
 
 
 
@@ -31,13 +31,24 @@ def login_view(request):
 
 @user_passes_test(not_logged_in,'/')
 def signup_view(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = User.objects.create_user(email=email,password=password)
+            user.save()
+            user = authenticate(request, username=email, password=password)
+            login(request, user)
+            return redirect('/')
+        else:
+            raise Http404(form.errors)
     return render(request, "core/signup.html")
 
 def upload_image(request):
     if request.method == 'POST':
         form = ImageForm(request.POST,request.FILES)
         if form.is_valid():
-            name = form.cleaned_data["name"]
             model = ImageItem(**form.cleaned_data, uploaded_by=request.user)
             model.save()
             return redirect('/')
